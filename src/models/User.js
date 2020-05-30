@@ -6,7 +6,8 @@ const userSchema = mongoose.Schema({
     userId: {
         type: String,
         required: true,
-        default: () => uuid.v4()
+        default: () => uuid.v4(),
+        unique: true
     },
     firstName: {
         type: String,
@@ -17,6 +18,11 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
         max: 255
+    },
+    country: {
+        type: String,
+        required: true,
+        length: 2
     },
 
 
@@ -35,7 +41,8 @@ const userSchema = mongoose.Schema({
     password: {
         type: String,
         required: true
-    },active: {
+    },
+    active: {
         type: Number, default: 1, required: true,
     }
 

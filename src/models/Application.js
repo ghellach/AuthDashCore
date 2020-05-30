@@ -16,10 +16,10 @@ const applicationSchema = mongoose.Schema({
 
     // Authentication
     appId: {
-        type: String, required: true, default: () => uuid.v4()
+        type: String, required: true, default: () => uuid.v4(), unique: true
     },
     appSecret: {
-        type: String, required: true, default: () => uuid.v4()
+        type: String, required: true, default: () => uuid.v4(), unique: true
     },
     clusterId: {
         type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Cluster'

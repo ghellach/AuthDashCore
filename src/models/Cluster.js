@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');const uuid = require('uuid');
-
+const mongoose = require('mongoose');
+const uuid = require('uuid');
 
 const nameSchema = mongoose.Schema({
     lang: {
@@ -14,7 +14,7 @@ const nameSchema = mongoose.Schema({
 // Main
 const clusterSchema = mongoose.Schema({
     clusterId: {
-        type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Cluster'
+        type: mongoose.Schema.Types.ObjectId, required: true, default: () => uuid.v4(), unique: true
     },
     names: [nameSchema],
     iconPath: {

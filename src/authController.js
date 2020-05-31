@@ -44,6 +44,28 @@ const register = async (req, res) => {
     });
 }
 
+const login = async (req, res) => {
+    // validate body
+    const {error} = authValidators.loginValidator(req.body);
+    if(error) return errorParser(res, "validation", error);
+
+    // fetch the application
+    const application = await Application.findOne({appId: req.body.appId});
+    if(!application) return errorParser(res, 1000);
+
+    // fetch user
+    const user = await User.findOne({email: req.body.email});
+    if(!user) return errorParser(res, 7001);
+
+    // check password
+    const decrypt = bcrypt.compareSync(req.body.password, user.password);
+    if(!decrypt) return errorParser(res, 7002);
+
+    // generate connection
+
+
+}
+
 module.exports = {
     register
 }

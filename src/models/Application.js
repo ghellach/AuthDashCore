@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Cluster = require('./Cluster');
 const uuid = require('uuid');
 
 const nameSchema = mongoose.Schema({

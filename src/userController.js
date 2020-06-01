@@ -5,10 +5,7 @@ const errorParser = require('./data/errors');
 // third-party modules
 const jwt = require('jsonwebtoken');
 
-const verify = async (req, res) => {
-    const {error} = userValidator.verifyValidator(req.body);
-    if(error) return errorParser(res, "validation", error);
-
+const verifyToken = async(req, res) => {
     // validates JWT
     try {
         let validation = jwt.verify(req.body.token, process.env.JWTSECRET);
@@ -23,6 +20,15 @@ const verify = async (req, res) => {
         .populate('userId');
     if(!connection) return errorParser(res, 7010);
     if(connection.appId.appId !== req.body.appId) return errorParser(res, 1000);
+
+    return connection;
+}
+
+const verify = async (req, res) => {
+    const {error} = userValidator.verifyValidator(req.body);
+    if(error) return errorParser(res, "validation", error);
+
+    const connection = await verifyToken(req, res);
 
     // return success message with user id
     return res.json({

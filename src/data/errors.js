@@ -25,6 +25,24 @@ module.exports = (res, code, more) => {
         },
 
 
+        7001: {
+            status: 400,
+            code: code,
+            error: "user not found",
+            additional_info: url + code
+        },
+        7002: {
+            status: 400,
+            code: code,
+            error: "password is wrong",
+            additional_info: url + code
+        },
+        7010: {
+            status: 401,
+            code: code,
+            error: "access token is invalid",
+            additional_info: url + code
+        },
         8000: {
             status: 401,
             code: code,

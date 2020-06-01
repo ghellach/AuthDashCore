@@ -1,11 +1,15 @@
 // Models
 const User = require('./models/User');
 const Application = require('./models/Application');
+const Connection = require('./models/Connection');
 // Validators and parsers
 const authValidators = require('./validators/authValidators');
 const errorParser = require('./data/errors');
-// third-party modules
+// third-party modulecodes
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const moment = require('moment');
+const random = require("randomstring");
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -61,11 +65,59 @@ const login = async (req, res) => {
     const decrypt = bcrypt.compareSync(req.body.password, user.password);
     if(!decrypt) return errorParser(res, 7002);
 
-    // generate connection
+    // generate JWT
+    let minutes;
+    req.body.minutes ? minutes = req.body.minutes : minutes = 60;
+    const token = jwt.sign({
+        userId: user.userId,
+        exp: moment().add(minutes,'minutes').unix()
+    }, process.env.JWTSECRET);
 
+    // generate connection
+    const connection = new Connection({
+        userId: user._id,
+        appId: application._id,
+        accessToken: token,
+        refreshToken: random.generate(256),
+        minutes: minutes
+    });
+    connection.save();
+
+    // return connectionId
+    return res.json({
+        message: 'connection created successfully',
+        connectionId: connection.connectionId
+    });
 
 }
 
+const connectionActivation = async (req, res) => {
+    const {error} = authValidators.connectionActivationValidator(req.body);
+    if (error) return errorParser(res, "validation", error);
+
+    // TODO add date validation
+    // verifies JWT
+    let token;
+    try{
+        token = jwt.verify(req.body.token, process.env.TOKEN);
+    }catch{
+        return errorParser(res, 2000);
+    }
+
+    // fetches connection
+    const connection = await Connection.findOne({connectionId: token.connectionId, activated: false});
+    if(!connection) return errorParser(res, 2000);
+    connection.activated = true
+    connection.save();
+
+    // return JWT to be stored as cookie
+    res.json({
+        accessToken: connection.accessToken
+    });
+}
+
 module.exports = {
-    register
+    register,
+    login,
+    connectionActivation
 }

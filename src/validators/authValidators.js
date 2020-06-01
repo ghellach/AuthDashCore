@@ -17,12 +17,21 @@ const loginValidator = data => {
     const verify = Joi.object({
         email: Joi.string().required().email(),
         password: Joi.string().required(),
-        appId: Joi.string().required()
+        appId: Joi.string().required(),
+        minutes: Joi.number().integer()
+    });
+    return validationErrorParser(verify.validate(data));
+}
+
+const connectionActivationValidator = data => {
+    const verify = Joi.object({
+        token: Joi.string().required()
     });
     return validationErrorParser(verify.validate(data));
 }
 
 module.exports = {
     registerValidator,
-    loginValidator
+    loginValidator,
+    connectionActivationValidator
 }

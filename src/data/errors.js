@@ -17,7 +17,12 @@ module.exports = (res, code, more) => {
             error: "application with id provided not found",
             additional_info: url + code
         },
-
+        2000: {
+            status: 400,
+            code: code,
+            error: "token is invalid",
+            additional_info: url + code
+        },
 
 
         8000: {

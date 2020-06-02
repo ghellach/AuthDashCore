@@ -66,8 +66,7 @@ const login = async (req, res) => {
     if(!decrypt) return errorParser(res, 7002);
 
     // generate JWT
-    let minutes;
-    req.body.minutes ? minutes = req.body.minutes : minutes = 60;
+    let minutes = application.accessMinutes;
     const token = jwt.sign({
         userId: user.userId,
         exp: moment().add(minutes,'minutes').unix()

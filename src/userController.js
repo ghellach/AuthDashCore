@@ -82,8 +82,10 @@ const update = async (req, res) => {
 
     // modifies fields or adds new if non existant
     Object.keys(req.body.properties).forEach(field => {
-        properties[field] = undefined;
-        properties[field]= req.body.properties[field];
+        if(properties[field] !== null) {
+            properties[field] = undefined;
+            properties[field]= req.body.properties[field];
+        }
     });
 
     // modify user object

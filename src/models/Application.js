@@ -26,6 +26,17 @@ const applicationSchema = mongoose.Schema({
     active: {
         type: Number, required: true, default: true
     },
+    accessMinutes: {
+        type: Number,
+        required: true,
+        default: 60
+    },
+    refreshMinutes: {
+        type: Number,
+        required: true,
+        default: 1440
+    },
+
 
     // Style
     color: {

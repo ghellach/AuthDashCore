@@ -51,6 +51,16 @@ const fetch = async (req, res) => {
     // format response
     const user = connection.userId;
 
+    // format properties and remove null ones
+    const properties = user.properties;
+    Object.keys(properties).forEach(field => {
+        if(properties[field] == null) {
+            properties[field] = undefined;
+        }else{
+            properties[field]= properties[field];
+        }
+    });
+
     // return success message with user id
     return res.json({
         userId: user.userId,
@@ -58,7 +68,7 @@ const fetch = async (req, res) => {
         lastName: user.lastName,
         email: user.email,
         country: user.country,
-        properties: user.properties
+        properties: properties
     });
 }
 
@@ -66,7 +76,7 @@ const update = async (req, res) => {
     const {error} = userValidator.updateValidator(req.body);
     if(error) return errorParser(res, "validation", error);
 
-    // defines connection and properties from user that is prefetched by middleware right below
+    // defines connection and properties from user that is pre-fetched by middleware right below
     const connection = await verifyToken(req, res);
     const properties = connection.userId.properties;
 
@@ -89,8 +99,36 @@ const update = async (req, res) => {
     });
 }
 
+const deleteProperties = async(req, res) => {
+    const {error} = userValidator.deletePropertiesValidator(req.body);
+    if(error) return errorParser(res, "validation", error);
+
+    // defines connection and properties from user that is prefetched by middleware right below
+    const connection = await verifyToken(req, res);
+    const properties = connection.userId.properties;
+
+    // modifies fields or adds new if non existant
+    req.body.properties.forEach(field => {
+        properties[field] = undefined
+    });
+
+    await User.updateOne({_id: connection.userId._id}, {
+        $set: {
+            properties: properties
+        }
+    });
+    // set user object
+    res.json({
+        message: "user properties modified successfully",
+        properties_deleted: req.body.properties,
+        userId: connection.userId.userId
+    });
+
+}
+
 module.exports = {
     verify,
     fetch,
-    update
+    update,
+    deleteProperties
 }

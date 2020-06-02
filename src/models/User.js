@@ -35,6 +35,10 @@ const userSchema = mongoose.Schema({
         required: true,
         rel: 'Cluster'
     },
+    properties: {
+        type: Object,
+        required: false,
+    },
 
 
     password: {

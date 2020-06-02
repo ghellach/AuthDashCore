@@ -12,9 +12,15 @@ module.exports = (res, code, more) => {
             additional_info: url + 8030
         },
         1000: {
-            status: 401,
+            status: 400,
             code: code,
             error: "application with id provided not found",
+            additional_info: url + code
+        },
+        1001: {
+            status: 401,
+            code: code,
+            error: "app credentials are invalid",
             additional_info: url + code
         },
         2000: {

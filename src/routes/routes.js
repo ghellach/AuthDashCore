@@ -16,6 +16,8 @@ router.post('/auth/connection_activation', authController.connectionActivation);
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // User Routes
 router.get('/user/verify', userController.verify)
+router.get('/user/fetch', userController.fetch)
+router.get('/user/modify', userController.modify)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 router.use(require('./specific'));

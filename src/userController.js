@@ -62,8 +62,8 @@ const fetch = async (req, res) => {
     });
 }
 
-const modify = async (req, res) => {
-    const {error} = userValidator.modifyValidator(req.body);
+const update = async (req, res) => {
+    const {error} = userValidator.updateValidator(req.body);
     if(error) return errorParser(res, "validation", error);
 
     // defines connection and properties from user that is prefetched by middleware right below
@@ -92,5 +92,5 @@ const modify = async (req, res) => {
 module.exports = {
     verify,
     fetch,
-    modify
+    update
 }

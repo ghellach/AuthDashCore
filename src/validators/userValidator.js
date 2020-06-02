@@ -10,7 +10,7 @@ const verifyValidator = (data) => {
     return validationErrorParser(verify.validate(data));
 }
 
-const modifyValidator = (data) => {
+const updateValidator = (data) => {
     const verify = Joi.object({
         appId: Joi.string().required(),
         appSecret: Joi.string().required(),
@@ -22,5 +22,5 @@ const modifyValidator = (data) => {
 
 module.exports = {
     verifyValidator,
-    modifyValidator
+    updateValidator
 }

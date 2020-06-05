@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const token = jwt.sign({
-    connectionId: 'c2d70bb0-90d7-465f-aeef-5159a04ef171',
-}, process.env.TOKEN);
+    connectionId: process.argv[2],
+}, 'dSgVkYp3s6v8y/B?E(H+MbQeThWmZq4t');
 
 console.log(token);

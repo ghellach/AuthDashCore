@@ -1,9 +1,8 @@
 {
   "name": "authdashbackend",
-  "version": "0.1å",
+  "version": "0.1.0",
   "main": "app.js",
   "author": "Achraf Ghellach",
-  "license": "MIT",
   "dependencies": {
     "@hapi/joi": "^17.1.1",
     "bcryptjs": "^2.4.3",

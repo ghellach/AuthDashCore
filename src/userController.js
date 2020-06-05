@@ -6,7 +6,7 @@ const errorParser = require('./data/errors');
 // third-party modules
 const jwt = require('jsonwebtoken');
 
-///////////////////////////////////////////////////////////////////////////////////////7
+///////////////////////////////////////////////////////////////////////////////////////
 const verifyToken = async(req, res) => {
     // validates JWT
     try {
@@ -52,12 +52,13 @@ const fetch = async (req, res) => {
     const user = connection.userId;
 
     // format properties and remove null ones
-    const properties = user.properties;
+    let properties = Array();
+    properties = user.properties;
     Object.keys(properties).forEach(field => {
-        if(properties[field] == null) {
+        if (properties[field] == null) {
             properties[field] = undefined;
-        }else{
-            properties[field]= properties[field];
+        } else {
+            properties[field] = properties[field];
         }
     });
 
@@ -80,12 +81,27 @@ const update = async (req, res) => {
     const connection = await verifyToken(req, res);
     const properties = connection.userId.properties;
 
+    // modified and added count
+    let modified = [];
+    let added = [];
+
     // modifies fields or adds new if non existant
     Object.keys(req.body.properties).forEach(field => {
-        if(properties[field] !== null) {
-            properties[field] = undefined;
-            properties[field]= req.body.properties[field];
+        const before = properties[field];
+        console.log(before);
+        if(before === undefined){
+            added.push(properties[field]);
         }
+        else {
+            if (before !== null) {
+                if(properties[field] !== req.body.properties[field]) {
+                    modified.push(properties[field]);
+                }
+                properties[field] = undefined;
+                properties[field] = req.body.properties[field];
+            }
+        }
+
     });
 
     // modify user object
@@ -97,7 +113,9 @@ const update = async (req, res) => {
 
     res.json({
         message: "user properties modified successfully",
-        userId: user.userId
+        userId: user.userId,
+        propertiesAdded: modified,
+        propertiesModified: added
     });
 }
 
@@ -107,7 +125,8 @@ const deleteProperties = async(req, res) => {
 
     // defines connection and properties from user that is prefetched by middleware right below
     const connection = await verifyToken(req, res);
-    const properties = connection.userId.properties;
+    let properties = [];
+    properties = connection.userId.properties;
 
     // modifies fields or adds new if non existant
     req.body.properties.forEach(field => {

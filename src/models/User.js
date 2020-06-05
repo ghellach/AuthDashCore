@@ -38,6 +38,9 @@ const userSchema = mongoose.Schema({
     properties: {
         type: Object,
         required: false,
+        default: {
+            "random": null
+        }
     },
 
 

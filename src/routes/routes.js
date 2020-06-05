@@ -17,7 +17,7 @@ router.post('/auth/connection_activation', authController.connectionActivation);
 // User Routes
 router.get('/user/verify', userController.verify);
 router.get('/user/fetch', userController.fetch);
-router.put('/user/update', userController.update);
+router.post('/user/update', userController.update);
 router.delete('/user/delete_properties', userController.deleteProperties);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

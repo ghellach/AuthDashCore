@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken');
 const verifyToken = async(req, res) => {
     // validates JWT
     try {
-        let validation = jwt.verify(req.body.token, process.env.JWTSECRET);
+        jwt.verify(req.body.token, process.env.JWTSECRET);
     }catch{
         return errorParser(res, 7010);
     }

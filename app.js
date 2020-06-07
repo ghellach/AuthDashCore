@@ -16,7 +16,8 @@ mongoose.connect(
     () => console.log(Date() + " | Connected to MongoDB successfully")
 );
 
+// Where magic happens !
 const routes = require('./src/routes/routes');
-app.use('', routes);
+app.use('/', routes);
 
 app.listen(7000, () => console.log(Date() + " | Web Server up and running"));

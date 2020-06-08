@@ -1,65 +1,29 @@
+const {readFileSync} = require('fs');
+const path = require('path');
+
+fileImports = () => {
+
+    const filesList = ['1000', '2000', '7000', '8000', 'other'];
+    let errors = {};
+
+    filesList.forEach(file => {
+        let fetch =  JSON.parse(readFileSync(path.join(__dirname, './errors/'+String(file)+'.json')));
+        Object.keys(fetch).forEach(key => errors[key] = fetch[key]);
+    });
+
+    return errors;
+    
+}
+
 module.exports = (res, code, more) => {
-    const url = process.env.ERROR_SITE_URL;
-    const errorsList = {
-        "500": {
-            status: 500,
-            error: "Server Error",
-        },
-        "validation": {
-            status: 400,
-            code: 8030,
-            error: more,
-            additional_info: url + 8030
-        },
-        1000: {
-            status: 400,
-            code: code,
-            error: "application with id provided not found",
-            additional_info: url + code
-        },
-        1001: {
-            status: 401,
-            code: code,
-            error: "app credentials are invalid",
-            additional_info: url + code
-        },
-        2000: {
-            status: 400,
-            code: code,
-            error: "token is invalid",
-            additional_info: url + code
-        },
-
-
-        7001: {
-            status: 400,
-            code: code,
-            error: "user not found",
-            additional_info: url + code
-        },
-        7002: {
-            status: 400,
-            code: code,
-            error: "password is wrong",
-            additional_info: url + code
-        },
-        7010: {
-            status: 401,
-            code: code,
-            error: "access token is invalid",
-            additional_info: url + code
-        },
-        8000: {
-            status: 401,
-            code: code,
-            error: "this email is already used in the cluster",
-            additional_info: url + code
-        },
-    }
     try {
-        const one = errorsList[code];
-        res.status(one.status).send(one);
+        let error = fileImports()[code];
+        error.code = code;
+        error.message = more;
+        error.additionalInfo = process.env.DEV_URL + '/docs/errors/' + code;
+    
+        res.status(error.status).json(error);
     }catch{
-        return res.status(500).send(errorsList[500]);
+        return res.status(500).json(fileImports()[500]);
     }
 }

@@ -1,0 +1,10 @@
+{
+    "1000": {
+        "status": 400,
+        "error": "application with id provided not found"
+    },
+    "1001": {
+        "status": 401,
+        "error": "app credentials are invalid"
+    }
+}

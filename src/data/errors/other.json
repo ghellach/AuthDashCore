@@ -1,7 +1,7 @@
 {
     "500": {
         "status": 500,
-        "error": "Server Error",
+        "error": "Server Error"
     },
     "validation": {
         "status": 400,

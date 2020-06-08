@@ -1,0 +1,6 @@
+{
+    "8000": {
+        "status": 401,
+        "error": "this email is already used in the cluster"
+    }
+}

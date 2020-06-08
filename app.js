@@ -16,6 +16,13 @@ mongoose.connect(
     () => console.log(Date() + " | Connected to MongoDB successfully")
 );
 
+// bad request handler
+app.use((err, req, res, next) => {
+    if(err.status === 400) return res.status(err.status).json({status: 400, message: 'bad request'});
+
+    return next(err);
+});
+
 // Where magic happens !
 const routes = require('./src/routes/routes');
 app.use('/', routes);

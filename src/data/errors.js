@@ -7,7 +7,7 @@ fileImports = () => {
     let errors = {};
 
     filesList.forEach(file => {
-        let fetch =  JSON.parse(readFileSync(path.join(__dirname, './errors/'+String(file)+'.json')));
+        let fetch =  JSON.parse(readFileSync(path.join(__dirname, '../../data/errors/'+String(file)+'.json')));
         Object.keys(fetch).forEach(key => errors[key] = fetch[key]);
     });
 

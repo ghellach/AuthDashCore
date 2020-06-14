@@ -17,7 +17,7 @@ const verifyToken = async(req, res) => {
 
     // fetches connection
     const connection = await Connection
-        .findOne({accessToken: req.body.token, activated: true, revoked: false})
+        .findOne({access_token: req.body.token, activated: true, revoked: false})
         .populate('appId')
         .populate('userId');
     if(!connection) return errorParser(res, 7010);
@@ -68,8 +68,14 @@ const fetch = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        country: user.country,
-        properties: properties
+        emailVerifiedAt: user.emailVerifiedAt,
+        phone: user.phone,
+        phoneVerifiedAt: user.phoneVerifiedAt,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        lastIp: user.lastIp,
+        lastConnectionAt: user.lastConnectionAt,
+        properties: properties,
     });
 }
 
@@ -81,27 +87,19 @@ const update = async (req, res) => {
     const connection = await verifyToken(req, res);
     const properties = connection.userId.properties;
 
-    // modified and added count
-    let modified = [];
-    let added = [];
+    let addedProperties = [];
+    let modifiedProperties = [];
 
     // modifies fields or adds new if non existant
     Object.keys(req.body.properties).forEach(field => {
         const before = properties[field];
-        console.log(before);
-        if(before === undefined){
-            added.push(properties[field]);
+        if(before === undefined) {
+            addedProperties.push(field);
+        }else if(before !== req.body.properties[field]) {
+            modifiedProperties.push(field);
+            properties[field] = undefined;
+            properties[field] = req.body.properties[field];
         }
-        else {
-            if (before !== null) {
-                if(properties[field] !== req.body.properties[field]) {
-                    modified.push(properties[field]);
-                }
-                properties[field] = undefined;
-                properties[field] = req.body.properties[field];
-            }
-        }
-
     });
 
     // modify user object
@@ -114,8 +112,8 @@ const update = async (req, res) => {
     res.json({
         message: "user properties modified successfully",
         userId: user.userId,
-        propertiesAdded: modified,
-        propertiesModified: added
+        addedProperties,
+        modifiedProperties
     });
 }
 
@@ -148,6 +146,7 @@ const deleteProperties = async(req, res) => {
 }
 
 module.exports = {
+    verifyToken,
     verify,
     fetch,
     update,

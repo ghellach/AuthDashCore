@@ -18,17 +18,21 @@ const userSchema = mongoose.Schema({
         required: true,
         max: 255
     },
-    country: {
-        type: String,
-        required: true,
-        length: 2
-    },
-
 
     email: {
         type: String,
         required: true,
         max: 255
+    },
+    phone: {
+        type: String,
+        required: false,
+        max:255
+    },
+    username: {
+        type: String,
+        required: false,
+        max:255
     },
     clusterId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -50,6 +54,36 @@ const userSchema = mongoose.Schema({
     },
     active: {
         type: Number, default: 1, required: true,
+    },
+
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now()
+    },
+    updatedAt: {
+        type: Date,
+        required: false,
+        default: null
+    },
+    emailVerifiedAt: {
+        type: Date,
+        required: false,
+        default: null
+    },
+    phoneVerifiedAt: {
+        type: Date,
+        required: false
+    },
+
+    lastIp: {
+        type: String,
+        required: true
+    },
+    lastConnectionAt: {
+        type: Date,
+        required: true,
+        default: Date.now()
     }
 
 });

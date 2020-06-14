@@ -3,13 +3,16 @@ const User = require('./models/User');
 const Application = require('./models/Application');
 const Connection = require('./models/Connection');
 // Validators and parsers
+const {verifyToken} = require('./userController');
 const authValidators = require('./validators/authValidators');
+const userValidator = require('./validators/userValidator');
 const errorParser = require('./data/errors');
 // third-party modulecodes
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const random = require("randomstring");
+const { connect } = require('mongoose');
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -35,10 +38,10 @@ const register = async (req, res) => {
     const user = new User({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-        country: req.body.country,
         email: req.body.email,
         password: password,
-        clusterId: application.clusterId
+        clusterId: application.clusterId,
+        lastIp: req.connection.remoteAddress
     });
     user.save();
 
@@ -76,11 +79,16 @@ const login = async (req, res) => {
     const connection = new Connection({
         userId: user._id,
         appId: application._id,
-        accessToken: token,
-        refreshToken: random.generate(256),
+        access_token: token,
+        refresh_token: random.generate(256),
         minutes: minutes
     });
     connection.save();
+
+    //set last connection ip and date
+    user.lastIp = req.connection.remoteAddress;
+    user.lastConnectionAt = Date.now();
+    await user.save();
 
     // return connectionId
     return res.json({
@@ -98,7 +106,7 @@ const connectionActivation = async (req, res) => {
     // verifies JWT
     let token;
     try{
-        token = jwt.verify(req.body.token, process.env.TOKEN);
+        token = jwt.verify(req.body.token, process.env.CLIENTTOKEN);
     }catch{
         return errorParser(res, 2000);
     }
@@ -111,12 +119,53 @@ const connectionActivation = async (req, res) => {
 
     // return JWT to be stored as cookie
     res.json({
-        accessToken: connection.accessToken
+        access_token: connection.access_token
     });
+}
+
+const disconnect = async(req, res) => {
+    const {error} = userValidator.verifyValidator(req.body);
+    if(error) return errorParser(res, "validation", error);
+
+    const connection = await verifyToken(req, res);
+
+    connection.revoked = true;
+    await connection.save();
+
+    return res.json({
+        status: 200,
+        message: "token revoked successfully"
+    })
+    
+}
+
+const revokeConnections = async(req, res) => {
+    const {error} = userValidator.verifyValidator(req.body);
+    if(error) return errorParser(res, "validation", error);
+
+    const connection = await verifyToken(req, res);
+
+    const user = connection.userId;
+
+    const connections = await Connection.find({userId: user.id, revoked: false});
+
+    connections.forEach(async connection => {
+        connection.revoked = true;
+        await connection.save();
+    })
+
+    return res.json({
+        status: 200,
+        message: "all tokens revoked successfully",
+        totalRevoked: connections.length
+    })
+    
 }
 
 module.exports = {
     register,
     login,
-    connectionActivation
+    connectionActivation,
+    disconnect,
+    revokeConnections
 }

@@ -3,12 +3,15 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
+const bearerToken = require('express-bearer-token');
 
 // Application configuration
 const app = express();
 app.use(cors());
+app.use("/static", express.static('./static'));
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(bearerToken());
 dotenv.config();
 mongoose.connect(
     process.env.MONGODB,

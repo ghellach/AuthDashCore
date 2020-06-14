@@ -1,0 +1,14 @@
+{
+    "7001": {
+        "status": 400,
+        "error": "user with this email is inexistant"
+    },
+    "7002": {
+        "status": 400,
+        "error": "password is incorrect"
+    },
+    "7010": {
+        "status": 401,
+        "error": "access token is invalid"
+    }
+}

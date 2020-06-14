@@ -20,6 +20,9 @@ const applicationSchema = mongoose.Schema({
     appSecret: {
         type: String, required: true, default: () => uuid.v4(), unique: true
     },
+    callbackUrl: {
+        type: String, required: true,
+    },
     clusterId: {
         type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Cluster'
     },

@@ -18,11 +18,11 @@ const connectionSchema = mongoose.Schema({
         default: () => uuid.v4(),
         unique: true
     },
-    accessToken: {
+    access_token: {
         type: String,
         required: true
     },
-    refreshToken: {
+    refresh_token: {
         type: String,
         required: true
     },

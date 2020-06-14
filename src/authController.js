@@ -88,6 +88,7 @@ const login = async (req, res) => {
     //set last connection ip and date
     user.lastIp = req.connection.remoteAddress;
     user.lastConnectionAt = Date.now();
+    user.lastConnections.push({ip: user.lastIp, at: user.lastConnectionAt});
     await user.save();
 
     // return connectionId

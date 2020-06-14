@@ -93,7 +93,7 @@ const update = async (req, res) => {
     // modifies fields or adds new if non existant
     Object.keys(req.body.properties).forEach(field => {
         const before = properties[field];
-        if(before === undefined) {
+        if(before === undefined || before === null) {
             addedProperties.push(field);
         }else if(before !== req.body.properties[field]) {
             modifiedProperties.push(field);
@@ -108,6 +108,10 @@ const update = async (req, res) => {
             properties: properties
         }
     });
+
+    // change update date
+    user.updatedAt = Date.now();
+    await user.save();
 
     res.json({
         message: "user properties modified successfully",
@@ -136,6 +140,11 @@ const deleteProperties = async(req, res) => {
             properties: properties
         }
     });
+
+    // change update date
+    user.updatedAt = Date.now();
+    await user.save();
+
     // set user object
     res.json({
         message: "user properties modified successfully",

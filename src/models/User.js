@@ -1,6 +1,19 @@
 const mongoose = require('mongoose');
 const uuid = require('uuid');
 
+
+const lastConnections = {
+    ip: {
+        type: String,
+        required: true
+    },
+    at: {
+        type: Date,
+        required: true,
+        default: Date.now()
+    }
+}
+
 const userSchema = mongoose.Schema({
     userId: {
         type: String,
@@ -84,8 +97,10 @@ const userSchema = mongoose.Schema({
         type: Date,
         required: true,
         default: Date.now()
-    }
+    },
+    lastConnections: [lastConnections]
 
 });
+
 
 module.exports = mongoose.model('User', userSchema);

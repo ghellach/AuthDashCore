@@ -12,7 +12,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const random = require("randomstring");
-const { connect } = require('mongoose');
+// own
+const {emailConfimation} = require('./gateways/emailGateway');
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -33,7 +34,7 @@ const register = async (req, res) => {
     // hashes password
     const salt = bcrypt.genSaltSync(10);
     const password = bcrypt.hashSync(req.body.password, salt);
-    console.log(application);
+
     // new user
     const user = new User({
         firstName: req.body.firstName,
@@ -43,12 +44,10 @@ const register = async (req, res) => {
         clusterId: application.clusterId,
         lastIp: req.connection.remoteAddress
     });
-    user.save();
+    
+    // send email confirmation, saves user, and sends response
+    emailConfimation(res, user, application, errorParser);
 
-    return res.json({
-        status: 200,
-        message: 'user with email '+user.email+' has been created successfully !'
-    });
 }
 
 const login = async (req, res) => {

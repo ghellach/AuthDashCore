@@ -10,6 +10,18 @@ const nameSchema = mongoose.Schema({
     }
 });
 
+const emailProfile = mongoose.Schema({
+    service: {
+        type: String, required : true
+    },
+    credentials: {
+        type: Object, required: true
+    },
+    from: {
+        type: String, required: true
+    }
+})
+
 const applicationSchema = mongoose.Schema({
     names: [nameSchema],
 
@@ -39,6 +51,7 @@ const applicationSchema = mongoose.Schema({
         required: true,
         default: 1440
     },
+    emailProfile,
 
 
     // Style

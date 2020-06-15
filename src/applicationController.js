@@ -1,8 +1,6 @@
 const Application = require('./models/Application');
 const Connection = require('./models/Connection');
-const applicationValidator = require('./validators/applicationValidator');
 const errorParser = require('./data/errors');
-const { response } = require('express');
 
 const fetch = async (req, res) => {
     if(!req.params.id) return errorParser(res, "validation", {error: 'id is required'});

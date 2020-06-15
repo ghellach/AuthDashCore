@@ -1,0 +1,7 @@
+[
+  {
+    "id": "1",
+    "provider": "SendGrid",
+    "fields": [ "apiKey", "from", "to"]
+  }
+]

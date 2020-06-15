@@ -10,11 +10,23 @@ const nameSchema = mongoose.Schema({
     }
 });
 
+const emailProfile = mongoose.Schema({
+    service: {
+        type: String, required : true
+    },
+    credentials: {
+        type: Object, required: true
+    },
+    from: {
+        type: String, required: true
+    }
+});
+
 
 // Main
 const clusterSchema = mongoose.Schema({
     clusterId: {
-        type: mongoose.Schema.Types.ObjectId, required: true, default: () => uuid.v4(), unique: true
+        type: String, required: true, default: () => uuid.v4(), unique: true
     },
     names: [nameSchema],
     iconPath: {
@@ -22,7 +34,8 @@ const clusterSchema = mongoose.Schema({
     },
     active: {
         type: Number, default: 1, required: true,
-    }
+    },
+    emailProfile: emailProfile
 });
 
 module.exports = mongoose.model('Cluster', clusterSchema)

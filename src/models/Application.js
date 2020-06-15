@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const uuid = require('uuid');
+const Cluster = require('./Cluster');
 
 const nameSchema = mongoose.Schema({
     lang: {
@@ -9,18 +10,6 @@ const nameSchema = mongoose.Schema({
         type: String, max: 255, required: true
     }
 });
-
-const emailProfile = mongoose.Schema({
-    service: {
-        type: String, required : true
-    },
-    credentials: {
-        type: Object, required: true
-    },
-    from: {
-        type: String, required: true
-    }
-})
 
 const applicationSchema = mongoose.Schema({
     names: [nameSchema],
@@ -36,7 +25,9 @@ const applicationSchema = mongoose.Schema({
         type: String, required: true,
     },
     clusterId: {
-        type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Cluster'
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Cluster'
     },
     active: {
         type: Number, required: true, default: true
@@ -51,7 +42,6 @@ const applicationSchema = mongoose.Schema({
         required: true,
         default: 1440
     },
-    emailProfile,
 
 
     // Style

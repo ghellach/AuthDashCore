@@ -47,10 +47,15 @@ const userSchema = mongoose.Schema({
         required: false,
         max:255
     },
+    lang: {
+        type: String, 
+        required: true,
+        max: 2
+    },
     clusterId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        rel: 'Cluster'
+        ref: 'Cluster'
     },
     properties: {
         type: Object,

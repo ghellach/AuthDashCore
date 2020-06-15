@@ -1,10 +1,10 @@
 const sendGrid = require("@sendgrid/mail");
 const nodemailer = require('nodemailer');
-const { send } = require("@sendgrid/mail");
 
-async function emailConfimation (res, user, application, errorParser) {
-    const emailProfile = application.emailProfile;
+async function emailConfimation (res, user, cluster, errorParser) {
+    const emailProfile = cluster.emailProfile;
 
+    // checks which email provider to use
     if(emailProfile) {
         if(emailProfile.service === "1") {
             try {

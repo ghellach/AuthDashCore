@@ -7,7 +7,8 @@ const registerValidator = (data) => {
         lastName: Joi.string().required().max(255),
         email: Joi.string().max(255).required().email(),
         password: Joi.string().min(6).required(),
-        appId: Joi.string().required()
+        appId: Joi.string().required(),
+        lang: Joi.string().length(2).required()
     });
     return validationErrorParser(verify.validate(data));
 }

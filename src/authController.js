@@ -2,6 +2,7 @@
 const User = require('./models/User');
 const Application = require('./models/Application');
 const Connection = require('./models/Connection');
+const Cluster = require('./models/Cluster');
 // Validators and parsers
 const {verifyToken} = require('./userController');
 const authValidators = require('./validators/authValidators');
@@ -27,6 +28,10 @@ const register = async (req, res) => {
     const application = await Application.findOne({appId: req.body.appId});
     if(!application) return errorParser(res, 1000);
 
+    // fetch the app's cluster
+    const cluster = await Cluster.findOne({_id: application.clusterId})
+    if(!cluster) return errorParser(res, 1000);
+    
     // checks if email already used;
     const userCheck = await User.findOne({email: req.body.email});
     if(userCheck) return errorParser(res, 8000);
@@ -42,11 +47,12 @@ const register = async (req, res) => {
         email: req.body.email,
         password: password,
         clusterId: application.clusterId,
-        lastIp: req.connection.remoteAddress
+        lastIp: req.connection.remoteAddress,
+        lang: req.body.lang
     });
     
     // send email confirmation, saves user, and sends response
-    emailConfimation(res, user, application, errorParser);
+    emailConfimation(res, user, cluster, errorParser);
 
 }
 

@@ -22,6 +22,14 @@ const emailProfile = mongoose.Schema({
     }
 });
 
+const templateSchema = mongoose.Schema({
+    name:  {type: String, required: true},
+    content: [mongoose.Schema({
+        lang: {type: String, required: true, default: 'en', max: 2},
+        value: {type: String, required: true},
+    })]
+})
+
 
 // Main
 const clusterSchema = mongoose.Schema({
@@ -35,7 +43,8 @@ const clusterSchema = mongoose.Schema({
     active: {
         type: Number, default: 1, required: true,
     },
-    emailProfile: emailProfile
+    emailProfile: emailProfile,
+    templates: [templateSchema],
 });
 
 module.exports = mongoose.model('Cluster', clusterSchema)

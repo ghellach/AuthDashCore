@@ -1,5 +1,6 @@
 const Connection = require('./models/Connection');
 const User = require('./models/User');
+const ConfirmationCode = require('./models/ConfirmationCode');
 // Validators and error parsers
 const userValidator = require('./validators/userValidator');
 const errorParser = require('./data/errors');
@@ -40,6 +41,48 @@ const verify = async (req, res) => {
         message: 'token is valid',
         userId: connection.userId.userId
     });
+}
+
+const verifyCode = async (req, res) => {
+    const {error} = userValidator.verifyCodeValidator(req.body);
+    if(error) return errorParser(res, "validation", error);
+
+     // fetch user
+     const user = await User.findOne({email: req.body.email});
+     if(!user) return errorParser(res, 2001);
+
+    // fetch code
+    const code = await ConfirmationCode.findOne({code: req.body.verificationCode, use:req.body.use, user: user._id, used: false});
+    if(!code) return errorParser(res, 2001);
+
+    // see if expired
+    if(code.expiresAt < Date.now()) return errorParser(res, 2001);
+
+    // see if code matches email
+    if(user.email !== req.body.email) return errorParser(res, 2001);
+
+    // set email or phone as verified
+    let what = '';
+    if(req.body.use === "emailConfirmation") {
+        user.emailVerifiedAt = Date.now();
+        what = 'email';
+    }else if(req.body.use === "phoneConfirmation"){
+        user.phoneVerifiedAt = Date.now();
+        what = 'phone';
+    }
+
+    // set code as used and user as verified
+    code.used = true
+    await code.save();
+    user.active = 1;
+    await user.save();
+
+    return res.json({
+        status: 200,
+        message: what + " emailverified successfully"
+    });
+
+    
 }
 
 const fetch = async (req, res) => {
@@ -157,6 +200,7 @@ const deleteProperties = async(req, res) => {
 module.exports = {
     verifyToken,
     verify,
+    verifyCode,
     fetch,
     update,
     deleteProperties

@@ -21,9 +21,11 @@ router.get('/app/connectionsource/:connection', applicationController.connection
 
 // User Routes
 router.get('/user/verify', userController.verify);
+router.post('/user/verifycode', userController.verifyCode);
 router.get('/user/fetch', userController.fetch);
 router.post('/user/update', userController.update);
 router.post('/user/delete_properties', userController.deleteProperties);
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 router.use(require('./specific'));

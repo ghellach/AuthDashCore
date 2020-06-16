@@ -45,6 +45,21 @@ const clusterSchema = mongoose.Schema({
     },
     emailProfile: emailProfile,
     templates: [templateSchema],
+    verifyEmail: {
+        type: Boolean,
+        required: true,
+        default: true
+    },
+    verifyPhone: {
+        type: Boolean,
+        required: true,
+        default: true
+    },
+    verificationCodeValidityTime: {
+        type: Number,
+        required: true,
+        default: 15
+    }
 });
 
 module.exports = mongoose.model('Cluster', clusterSchema)

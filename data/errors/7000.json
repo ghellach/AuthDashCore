@@ -10,5 +10,21 @@
     "7010": {
         "status": 401,
         "error": "access token is invalid"
+    },
+    "7021": {
+        "status": 401,
+        "error": "email address is not verified"
+    },
+    "7022": {
+        "status": 401,
+        "error": "phone is not verified"
+    },
+    "7023": {
+        "status": 401,
+        "error": "user is suspended"
+    },
+    "7024": {
+        "status": 401,
+        "error": "user is not active for some specific reasons"
     }
 }

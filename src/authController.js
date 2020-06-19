@@ -69,6 +69,11 @@ const login = async (req, res) => {
     const user = await User.findOne({email: req.body.email});
     if(!user) return errorParser(res, 7001);
 
+    // activity checks
+    if(user.active === 9) return errorParser(res, 7021);
+    if(user.active === 8) return errorParser(res, 7023);
+    if(user.active !== 1) return errorParser(res, 7024);
+
     // check password
     const decrypt = bcrypt.compareSync(req.body.password, user.password);
     if(!decrypt) return errorParser(res, 7002);
@@ -127,6 +132,10 @@ const connectionActivation = async (req, res) => {
     res.json({
         access_token: connection.access_token
     });
+}
+
+const resetPassword = async (req, res) => {
+    
 }
 
 const disconnect = async(req, res) => {

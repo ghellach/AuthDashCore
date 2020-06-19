@@ -29,6 +29,17 @@ const updateValidator = (data) => {
     return validationErrorParser(verify.validate(data));
 }
 
+
+const resetPasswordValidator = (data) => {
+    const verify = Joi.object({
+        appId: Joi.string().required(),
+        appSecret: Joi.string().required(),
+        token: Joi.string().required(),
+        properties: Joi.array().required(),
+    });
+    return validationErrorParser(verify.validate(data));
+}
+
 const deletePropertiesValidator = (data) => {
     const verify = Joi.object({
         appId: Joi.string().required(),

@@ -4,6 +4,12 @@ const applicationController = require('../applicationController');
 const userController = require('../userController');
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 const env = process.env;
+
+router.use((err, req, res, next) => {
+    if(err.status === 400) return res.status(err.status).json({status: 400, message: 'bad request'});
+    return next(err);
+});
+
 router.all('/', (req, res) =>
     res.json({apiName: env.APINAME, apiVersion: env.APIVERSION, apiRoot: env.APIROOT, apiStatus: env.APISTATUS})
 );

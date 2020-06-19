@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const dbConnection = require('./config/db');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
@@ -12,19 +12,8 @@ app.use("/static", express.static('./static'));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(bearerToken());
-dotenv.config();
-mongoose.connect(
-    process.env.MONGODB,
-    {useNewUrlParser: true, useUnifiedTopology: true},
-    () => console.log(Date() + " | Connected to MongoDB successfully")
-);
-
-// bad request handler
-app.use((err, req, res, next) => {
-    if(err.status === 400) return res.status(err.status).json({status: 400, message: 'bad request'});
-
-    return next(err);
-});
+dotenv.config({path: './config/config.env'});
+dbConnection();
 
 // Where magic happens !
 const routes = require('./src/routes/routes');

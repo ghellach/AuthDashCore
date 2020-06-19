@@ -79,7 +79,7 @@ const verifyCode = async (req, res) => {
 
     return res.json({
         status: 200,
-        message: what + " emailverified successfully"
+        message: what + " verified successfully"
     });
 
     

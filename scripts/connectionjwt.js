@@ -1,9 +1,11 @@
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
-dotenv.config();
+dotenv.config({path: "../config/config.env"});
+
+console.log(process.env.JWTSECRET);
 
 const token = jwt.sign({
     connectionId: process.argv[2],
-}, 'dSgVkYp3s6v8y/B?E(H+MbQeThWmZq4t');
+}, process.env.CLIENTTOKEN);
 
 console.log(token);

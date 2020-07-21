@@ -20,6 +20,7 @@ router.post('/auth/login', authController.login);
 router.post('/auth/connection_activation', authController.connectionActivation);
 router.post('/auth/disconnect', authController.disconnect);
 router.post('/auth/revokeconnections', authController.revokeConnections);
+router.post('/auth/resetpassword', authController.resetPassword);
 
 // Applications API
 router.get('/app/fetch/:id', applicationController.fetch);

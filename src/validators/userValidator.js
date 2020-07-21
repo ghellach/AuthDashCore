@@ -14,7 +14,8 @@ const verifyCodeValidator = (data) => {
     const verify = Joi.object({
         verificationCode: Joi.number().integer().required(),
         email: Joi.string().required(),
-        use: Joi.string().required()
+        use: Joi.string().required(),
+        password: Joi.string()
     });
     return validationErrorParser(verify.validate(data));
 }

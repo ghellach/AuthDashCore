@@ -8,6 +8,7 @@ const {verifyToken} = require('./userController');
 const authValidators = require('./validators/authValidators');
 const userValidator = require('./validators/userValidator');
 const errorParser = require('./data/errors');
+const activityCheck = require('./functions/activityCheck');
 // third-party modulecodes
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -15,6 +16,7 @@ const moment = require('moment');
 const random = require("randomstring");
 // own
 const {emailConfimation} = require('./gateways/emailGateway');
+const { findOne } = require('./models/User');
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -52,7 +54,7 @@ const register = async (req, res) => {
     });
     
     // send email confirmation, saves user, and sends response
-    emailConfimation(res, user, cluster, errorParser);
+    emailConfimation(res, user, cluster, errorParser, "emailConfirmation");
 
 }
 
@@ -70,9 +72,7 @@ const login = async (req, res) => {
     if(!user) return errorParser(res, 7001);
 
     // activity checks
-    if(user.active === 9) return errorParser(res, 7021);
-    if(user.active === 8) return errorParser(res, 7023);
-    if(user.active !== 1) return errorParser(res, 7024);
+    if(user.active !== 1) return activityCheck(user, errorParser)
 
     // check password
     const decrypt = bcrypt.compareSync(req.body.password, user.password);
@@ -135,7 +135,22 @@ const connectionActivation = async (req, res) => {
 }
 
 const resetPassword = async (req, res) => {
-    
+    const {error} = authValidators.resetPasswordValidator(req.body);
+    if (error) return errorParser(res, "validation", error);
+
+    // fetches user
+    const user = await (await User.findOne({email: req.body.email}));
+    if(!user) return errorParser(res, 7001);
+
+    //fetches cluster
+    const cluster = await Cluster.findOne({_id : user.clusterId});
+
+    // activity checks
+    if(user.active !== 1) return activityCheck(user, errorParser);
+
+    //send reset password email
+    emailConfimation(res, user, cluster, errorParser, "resetPassword");
+
 }
 
 const disconnect = async(req, res) => {
@@ -182,5 +197,6 @@ module.exports = {
     login,
     connectionActivation,
     disconnect,
-    revokeConnections
+    revokeConnections,
+    resetPassword
 }

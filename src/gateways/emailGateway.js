@@ -3,14 +3,16 @@ const nodemailer = require('nodemailer');
 const render = require('../functions/templateRender');
 const codeGen = require('../functions/verificationCodes');
 
-async function emailConfimation (res, user, cluster, errorParser) {
+async function emailConfimation (res, user, cluster, errorParser, use) {
     const emailProfile = cluster.emailProfile;
-    if(cluster.verifyEmail) {
+    let verifSet = false;
+    if(cluster.verifyEmail || use !== "emailConfirmation") {
+        verifSet = true
         // mark user as not verified
         user.active = 9;
 
         // generate unique verification code
-        const verificationCode = await codeGen(user, cluster.verificationCodeValidityTime, "emailConfirmation");
+        const verificationCode = await codeGen(user, cluster.verificationCodeValidityTime, use);
 
         // fetch cluster name for that specific language
         let fromname = "";
@@ -22,7 +24,7 @@ async function emailConfimation (res, user, cluster, errorParser) {
         const templates = cluster.templates;
         let view;
         templates.forEach(template => {
-            if(template.name === "emailConfirmation") view = template 
+            if(template.name === use) view = template 
         });
 
         // get correct language version of that template
@@ -32,7 +34,14 @@ async function emailConfimation (res, user, cluster, errorParser) {
         })
 
         // render html to be sent
-        const html = render(toRender, {firstName: "Achraf Ghellach", verificationCode: verificationCode});
+        const html = render(
+            toRender, 
+            {
+                firstName: user.firstName, 
+                lastName: user.lastName, 
+                verificationCode: verificationCode
+            }
+        );
 
 
         // checks which email provider to use
@@ -62,10 +71,13 @@ async function emailConfimation (res, user, cluster, errorParser) {
     
 
     user.save();
+
+    let message;
+    use !== "emailConfirmation" ? message = 'user with email '+user.email+' has been created successfully !' : message = "code sent successfully !";
     return res.json({
         status: 200,
-        message: 'user with email '+user.email+' has been created successfully !',
-        verificationCodeSent: true
+        message,
+        verificationCodeSent: verifSet
     }); 
 }
 

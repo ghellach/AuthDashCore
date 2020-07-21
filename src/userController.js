@@ -6,6 +6,7 @@ const userValidator = require('./validators/userValidator');
 const errorParser = require('./data/errors');
 // third-party modules
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 ///////////////////////////////////////////////////////////////////////////////////////
 const verifyToken = async(req, res) => {
@@ -66,15 +67,25 @@ const verifyCode = async (req, res) => {
     if(req.body.use === "emailConfirmation") {
         user.emailVerifiedAt = Date.now();
         what = 'email';
-    }else if(req.body.use === "phoneConfirmation"){
+    }else if(req.body.use === "phoneConfirmation") {
         user.phoneVerifiedAt = Date.now();
         what = 'phone';
-    }
+    }else if(req.body.use === "resetPassword") {
+        if(!req.body.password) return errorParser(res, 7025);
+        // hashes password
+        const salt = bcrypt.genSaltSync(10);
+        const password = bcrypt.hashSync(req.body.password, salt);
+        what = "password reset code"
+        user.password = password
+    };
 
     // set code as used and user as verified
     code.used = true
     await code.save();
-    user.active = 1;
+    if(req.body.use !== "resetPassword"){
+        user.active = 1;
+    }
+    
     await user.save();
 
     return res.json({

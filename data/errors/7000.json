@@ -26,5 +26,9 @@
     "7024": {
         "status": 401,
         "error": "user is not active for some specific reasons"
+    },
+    "7025": {
+        "status": 401,
+        "error": "new password is required in order to reset"
     }
 }

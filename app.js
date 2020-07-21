@@ -19,4 +19,9 @@ dbConnection();
 const routes = require('./src/routes/routes');
 app.use('/', routes);
 
-app.listen(7000, () => console.log(Date() + " | Web Server up and running"));
+app.listen(process.env.PORT, () => {
+    console.log(Date() + " | Web Server up and running");
+    console.log({
+        port: process.env.PORT
+    });
+});

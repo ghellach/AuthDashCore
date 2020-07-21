@@ -29,8 +29,19 @@ const connectionActivationValidator = data => {
     return validationErrorParser(verify.validate(data));
 }
 
+const resetPasswordValidator = data => {
+    const verify = Joi.object({
+        appId: Joi.string().required(),
+        appSecret: Joi.string().required(),
+        email: Joi.string().required().email(),
+    });
+    return validationErrorParser(verify.validate(data));
+}
+
+
 module.exports = {
     registerValidator,
     loginValidator,
-    connectionActivationValidator
+    connectionActivationValidator,
+    resetPasswordValidator
 }

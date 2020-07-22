@@ -36,6 +36,9 @@ const clusterSchema = mongoose.Schema({
     clusterId: {
         type: String, required: true, default: () => uuid.v4(), unique: true
     },
+    clusterSecret: {
+        type: String, required: true, default: () => uuid.v4(), unique: true
+    },
     names: [nameSchema],
     iconPath: {
         type: String,

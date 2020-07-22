@@ -16,7 +16,6 @@ const moment = require('moment');
 const random = require("randomstring");
 // own
 const {emailConfimation} = require('./gateways/emailGateway');
-const { findOne } = require('./models/User');
 
 
 //////////////////////////////////////////////////////////////////////////

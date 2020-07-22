@@ -7,8 +7,7 @@ const dbConnection = async () => {
             {
                 useNewUrlParser: true, 
                 useUnifiedTopology: true,
-                useCreateIndex: true,
-                useFindAndModify: true
+                useCreateIndex: true
             },
             () => console.log(Date() + " | Connected to MongoDB successfully")
         );

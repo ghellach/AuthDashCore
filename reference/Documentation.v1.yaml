@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  title: API v1.0 Documentation
+  title: AuthDash API Documentation
   version: '1.0'
-  description: 'Hey, welcome to this chicky documentation (I hope so) ! '
+  description: "\uD83D\uDC4BHey, welcome to this chicky documentation (I hope so) ! "
   contact:
     name: Achraf Ghellach
     url: 'https://authdash.com/team/AchrafGhellach'

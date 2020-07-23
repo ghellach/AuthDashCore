@@ -6,7 +6,7 @@ const User = require('./models/User');
 const statisticsValidators = require('./validators/statisticsValidators');
 const errorParser = require('./data/errors');
 
-async function applicationResponseObject(app) {
+function applicationResponseObject(app) {
     
     const response = {
         names: app.names,
@@ -32,14 +32,17 @@ async function cluster (req, res) {
     if(error) return errorParser(res, "validation", error);
 
     // fetches cluster
-    const clusterFetch = await Cluster.find({});
+    const clusterFetch = await Cluster.find({
+        clusterId: req.body.clusterId,
+        clusterSecret: req.body.clusterSecret
+    });
     let cluster = {};
     clusterFetch.forEach(one => {
         if(one.clusterId === req.body.clusterId && one.clusterSecret === req.body.clusterSecret) {
             cluster = one;
         }
     });
-    console.log(cluster);
+
     // generate appropriate error message id required
     if(cluster == {}) return errorParser(res, 1002);
 
@@ -48,17 +51,16 @@ async function cluster (req, res) {
     const usersCount = (await User.find({clusterId: cluster._id})).length;
 
     // generates app response format
-    let applications = [];
-    appFetch.forEach(app => applicationResponseObject(app).then(a => applications.push(a)));
+    const applications = appFetch.map(app => applicationResponseObject(app));
 
     // prepare response
     const response = {
         names: cluster.names,
         createdAt: cluster.createdAt,
-        applications: applications,
-        applicationsCount: applications.count,
+        emailProvider: cluster.emailProfile.service,
         usersCount,
-        emailProvider: cluster.emailProfile.service
+        applicationsCount: applications.count,
+        applications,
     }
 
 

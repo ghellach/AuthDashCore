@@ -3,13 +3,12 @@ const nodemailer = require('nodemailer');
 const render = require('../functions/templateRender');
 const codeGen = require('../functions/verificationCodes');
 
-async function emailConfimation (res, user, cluster, errorParser, use) {
+async function emailConfimation (res, user, cluster, errorParser, use, sendError) {
     const emailProfile = cluster.emailProfile;
     let verifSet = false;
     if(cluster.verifyEmail || use !== "emailConfirmation") {
         verifSet = true
         // mark user as not verified
-        user.active = 9;
 
         // generate unique verification code
         const verificationCode = await codeGen(user, cluster.verificationCodeValidityTime, use);
@@ -67,15 +66,27 @@ async function emailConfimation (res, user, cluster, errorParser, use) {
         }
         
     }
-
+    user.active = 9;
     
 
-    user.save();
+    // initialize default response params
+    let message = "code sent successfully !";
+    let status = 200;
 
-    let message;
-    use !== "emailConfirmation" ? message = 'user with email '+user.email+' has been created successfully !' : message = "code sent successfully !";
-    return res.json({
-        status: 200,
+    // set user to unverified if use is emailConfirmation
+    if(use === "emailConfirmation"){
+        user.active = 9;
+    }
+
+    // formats error if status of http response is aimed to be an error code
+    if(sendError){
+        message = "email not verified, verification code sent to email";
+        status = 401
+    }
+    user.save();
+    
+    return res.status(status).json({
+        status,
         message,
         verificationCodeSent: verifSet
     }); 

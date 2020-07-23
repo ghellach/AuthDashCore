@@ -4,7 +4,7 @@ const Cluster = require('./Cluster');
 
 const nameSchema = mongoose.Schema({
     lang: {
-        type: String, length: 2, required: true, unique: true
+        type: String, length: 2, required: true,
     },
     value: {
         type: String, max: 255, required: true
@@ -56,7 +56,10 @@ const applicationSchema = mongoose.Schema({
     },
     iconPath: {
         type: String, required: true, default: '/application/icons/placeholder.jpg'
-    }
+    },
+    numberOfConnections: {type:Number, required: true, default: 0},
+    numberOfRegistrations: {type:Number, required: true, default: 0},
+    numberOfPasswordResets: {type:Number, required: true, default: 0},
 
 });
 

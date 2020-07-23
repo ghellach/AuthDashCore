@@ -22,7 +22,8 @@
     "uuid": "^8.1.0"
   },
   "scripts": {
-    "dev": "kill -9 $(lsof -t -i:5000) && nodemon app.js",
+    "dev": "nodemon app.js",
+    "dev:clean": "kill -9 $(lsof -t -i:5000) && nodemon app.js",
     "start": "kill -9 $(lsof -t -i:5000) && node app.js"
   },
   "devDependencies": {

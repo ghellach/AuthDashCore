@@ -71,7 +71,7 @@ const login = async (req, res) => {
     if(!user) return errorParser(res, 7001);
 
     // activity checks
-    if(user.active !== 1) return activityCheck(user, errorParser)
+    if(user.active !== 1) return activityCheck(res, user, errorParser)
 
     // check password
     const decrypt = bcrypt.compareSync(req.body.password, user.password);
@@ -99,6 +99,10 @@ const login = async (req, res) => {
     user.lastConnectionAt = Date.now();
     user.lastConnections.push({ip: user.lastIp, at: user.lastConnectionAt});
     await user.save();
+
+    // increment connection to application
+    application.numberOfConnections++;
+    application.save();
 
     // return connectionId
     return res.json({
@@ -145,7 +149,12 @@ const resetPassword = async (req, res) => {
     const cluster = await Cluster.findOne({_id : user.clusterId});
 
     // activity checks
-    if(user.active !== 1) return activityCheck(user, errorParser);
+    if(user.active !== 1) return activityCheck(res, user, errorParser);
+
+    // fecth application to increment resetpassword
+    const application = await Application.findOne({clusterId: cluster._id});
+    application.numberOfConnections++;
+    application.save();
 
     //send reset password email
     emailConfimation(res, user, cluster, errorParser, "resetPassword");

@@ -35,11 +35,14 @@ router.get('/app/connectionsource/:connection', applicationController.connection
 // User Routes
 router.get('/user/verify', userController.verify);
 router.get('/user/fetch', userController.fetch);
+router.post('/user/updatedetails', userController.updateMainDetails);
 router.post('/user/update', userController.update);
 router.post('/user/delete_properties', userController.deleteProperties);
 
 // Data Routes
-router.get('/statistics/cluster', statisticsController.cluster)
+router.get('/statistics/cluster', statisticsController.cluster);
+router.get('/statistics/application', statisticsController.application);
+router.get('/statistics/clusterorderby', statisticsController.clusterOrderBy);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

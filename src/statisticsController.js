@@ -31,20 +31,14 @@ async function cluster (req, res) {
     const {error} = statisticsValidators.clusterValidator(req.body);
     if(error) return errorParser(res, "validation", error);
 
-    // fetches cluster
-    const clusterFetch = await Cluster.find({
+    // fetches application
+    const cluster = await Cluster.findOne({
         clusterId: req.body.clusterId,
         clusterSecret: req.body.clusterSecret
     });
-    let cluster = {};
-    clusterFetch.forEach(one => {
-        if(one.clusterId === req.body.clusterId && one.clusterSecret === req.body.clusterSecret) {
-            cluster = one;
-        }
-    });
 
     // generate appropriate error message id required
-    if(cluster == {}) return errorParser(res, 1002);
+    if(!cluster) return errorParser(res, 1002);
 
     // fetches cluster's applications and users (users to be counted)
     const appFetch = await Application.find({clusterId: cluster._id});
@@ -67,6 +61,38 @@ async function cluster (req, res) {
     return res.send(response);
 }
 
+async function application(req, res) {
+    const {error} = statisticsValidators.applicationValidator(req.body);
+    if(error) return errorParser(res, "validation", error);
+
+    const application = await Application.findOne({
+        appId: req.body.appId,
+        appSecret: req.body.appSecret
+    });
+
+    if(!application) return errorParser(res, 1001);
+
+    return res.json(applicationResponseObject(application));
+}
+
+async function clusterOrderBy(req, res) {
+    const {error} = statisticsValidators.clusterOrderByValidator(req.body);
+    if(error) return errorParser(res, "validation", error);
+
+    // fetches application
+    const cluster = await Cluster.findOne({
+        clusterId: req.body.clusterId,
+        clusterSecret: req.body.clusterSecret
+    });
+
+    if(!cluster) return errorParser(res, 1002);
+
+    res.send('ok')
+
+}
+
 module.exports = {
-    cluster
+    cluster,
+    application,
+    clusterOrderBy
 }

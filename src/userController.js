@@ -26,6 +26,8 @@ const verifyToken = async(req, res) => {
     if(connection.appId.appId !== req.body.appId) return errorParser(res, 1000);
     if(connection.appId.appSecret !== req.body.appSecret) return errorParser(res, 1001);
 
+    if(!connection.userId) return errorParser(res, 7001)
+
     return connection;
 }
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -86,6 +88,7 @@ const verifyCode = async (req, res) => {
         user.active = 1;
     }
     
+    user.updatedAt = Date.now();
     await user.save();
 
     return res.json({
@@ -130,6 +133,46 @@ const fetch = async (req, res) => {
         lastIp: user.lastIp,
         lastConnectionAt: user.lastConnectionAt,
         properties: properties,
+    });
+}
+
+const updateMainDetails = async (req, res) => {
+    const {error} = userValidator.updateMainDetails(req.body);
+    if(error) return errorParser(res, "validation", error);
+
+    // defines connection from user that is pre-fetched by middleware right below
+    const connection = await verifyToken(req, res);
+
+    // fetch user
+    const user = await User.findOne({_id: connection.userId._id});
+    const verifyEmail = await User.findOne({email: user.email});
+
+    // format details from body
+    const details = req.body.details;
+    let updated = Array();
+    Object.keys(details).forEach(detail => {
+        if(detail === "email" && user.email === verify.email && user._id !== verifyEmail._id){
+            return errorParser(res, 8000)
+        }
+        if(
+            detail === "createdAt" || 
+            detail === "updatedAt" || 
+            detail === "password" || 
+            detail=="properties"
+        ){
+            return errorParser(res, 7030, `property that could not be updated: "${detail}". Please refer to the documentation`)
+        }
+        user[detail] = details[detail];
+        updated.push(detail);
+    });
+
+    user.updatedAt = Date.now();
+    user.save();
+
+    return res.json({
+        status: 200,
+        message: "details updated successfully",
+        updatedDetails: updated
     });
 }
 
@@ -213,6 +256,7 @@ module.exports = {
     verify,
     verifyCode,
     fetch,
+    updateMainDetails,
     update,
     deleteProperties
 }

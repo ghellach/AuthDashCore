@@ -35,7 +35,8 @@ const userSchema = mongoose.Schema({
     email: {
         type: String,
         required: true,
-        max: 255
+        max: 255,
+        unique: true
     },
     phone: {
         type: String,

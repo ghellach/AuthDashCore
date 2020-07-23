@@ -30,5 +30,9 @@
     "7025": {
         "status": 401,
         "error": "new password is required in order to reset"
+    },
+    "7030": {
+        "status": 400,
+        "error": "cannot update a detail"
     }
 }

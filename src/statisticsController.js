@@ -31,7 +31,7 @@ async function cluster (req, res) {
     const {error} = statisticsValidators.clusterValidator(req.body);
     if(error) return errorParser(res, "validation", error);
 
-    // fetches application
+    // fetches cluster
     const cluster = await Cluster.findOne({
         clusterId: req.body.clusterId,
         clusterSecret: req.body.clusterSecret
@@ -87,12 +87,83 @@ async function clusterOrderBy(req, res) {
 
     if(!cluster) return errorParser(res, 1002);
 
-    res.send('ok')
+    // defines property work with
+    const p = req.body.property;
 
+    // fetches users for this cluster
+    const users = await User.find({clusterId: cluster._id});
+
+    // get values for the requested property from each user
+    const c = {};
+    if(p === "lang" || p === "active"){
+        users.forEach(user => {
+            let his = user[p];
+            if(!c[his]) c[his] = 0;
+            c[his]++;
+        });
+    }else{
+        users.forEach(user => {
+            let his = user.properties[p];
+            if(!c[his]) c[his] = 0;
+            c[his]++;
+        });
+    }
+
+    // sorts the properies values depending on the order specified by the client
+    let keysSorted;
+    if(req.body.order === "desc") keysSorted = Object.keys(c).sort(function(a,b){return c[a]+c[b]});
+    else if(req.body.order === "asc") keysSorted = Object.keys(c).sort(function(a,b){return c[a]-c[b]});
+    else return errorParser(res, "ipv");
+
+
+    // finalize results
+    const objectSorted = {};
+    keysSorted.forEach(key => {
+        objectSorted[key] = c[key];
+    });
+
+    // create alert message of the propery does not exist.
+    let results = objectSorted;
+    if(objectSorted.undefined === users.length) {
+        results = "the requested property does not exist on any user in the cluster"
+    }
+    return res.json({
+        property: p,
+        order: req.body.order,
+        results
+    });
+}
+
+async function getAllUsers (req, res) {
+    const {error} = statisticsValidators.clusterValidator(req.body);
+    if(error) return errorParser(res, "validation", error);
+
+    //fetches cluster
+    const cluster = await Cluster.findOne({
+        clusterId: req.body.clusterId,
+        clusterSecret: req.body.clusterSecret
+    });
+
+    // generate appropriate error message id required
+    if(!cluster) return errorParser(res, 1002);
+
+    // fetches all users
+    const usersFetch = await User.find({clusterId: cluster._id});
+    const copy = [...usersFetch];
+    const users = copy.map(user => {
+        user.password = undefined
+        return user;
+    });
+
+    return res.json({
+        usersCount: usersFetch.length,
+        users
+    });
 }
 
 module.exports = {
     cluster,
     application,
-    clusterOrderBy
+    clusterOrderBy,
+    getAllUsers
 }

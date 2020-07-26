@@ -66,7 +66,7 @@ async function emailConfimation (res, user, cluster, errorParser, use, sendError
         }
         
     }
-    user.active = 9;
+   
     
 
     // initialize default response params

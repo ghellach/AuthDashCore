@@ -43,6 +43,7 @@ router.post('/user/delete_properties', userController.deleteProperties);
 router.get('/statistics/cluster', statisticsController.cluster);
 router.get('/statistics/application', statisticsController.application);
 router.get('/statistics/clusterorderby', statisticsController.clusterOrderBy);
+router.get('/statistics/getallusers', statisticsController.getAllUsers);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

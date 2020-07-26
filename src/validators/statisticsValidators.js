@@ -21,6 +21,8 @@ const clusterOrderByValidator = (data) => {
     const verify = Joi.object({
         clusterId: Joi.string().required(),
         clusterSecret: Joi.string().required(),
+        property: Joi.string().required(),
+        order: Joi.string().valid("desc", "asc").required()
     });
     return validationErrorParser(verify.validate(data));
 }

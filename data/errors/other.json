@@ -6,5 +6,8 @@
     "validation": {
         "status": 400,
         "code": 8030
+    },
+    "ipv": {
+        "status": 400
     }
 }

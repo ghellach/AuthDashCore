@@ -25,7 +25,9 @@ const fetch = async (req, res) => {
 const connectionsource = async(req, res) => {
     if(!req.params.connection) return errorParser(res, "validation", {error: 'connection is required'});
 
-    const connection = await Connection.findOne({connectionId: req.params.connection, activated: false, revoked: false}).populate('appId');
+    const connection = await Connection
+                .findOne({connectionId: req.params.connection, activated: false, revoked: false})
+                .populate('appId');
     if(!connection) return res.status(400).send('none');
     res.send(connection.appId.callbackUrl)
 }

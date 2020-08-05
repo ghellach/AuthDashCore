@@ -34,5 +34,4 @@ An organization can create a cluster which contains applications. A cluster is t
 
 
 
-##### I am open to everyone who wants to contribute to this project. Feel free to check it out ! Achraf Ghellach .
-
+##### I am open to everyone who wants to contribute to this project. Feel free to check it out ! Achraf Ghellach.
